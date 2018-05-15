@@ -6,19 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://huangliang314.github.io">
-  <title>Hello World | Laughing的工作学习笔记</title>
+  <title>Oracle基础--listagg与wm_concat | Laughing的工作学习笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="listagg与wm_concat当查询较慢时，使用listagg代替wm_concat WMSYS.WM_CONCAT: 依赖WMSYS 用户，不同oracle环境时可能用不了，返回类型为CLOB，可用substr截取长度后to_char转化为字符类型 LISTAGG  : 11g2才提供的函数，不支持distinct,拼接长度不能大于4000,函数返回为varchar2类型，最大长度为4000">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://huangliang314.github.io/2018/04/16/hello-world/index.html">
+<meta property="og:title" content="Oracle基础--listagg与wm_concat">
+<meta property="og:url" content="http://huangliang314.github.io/2018/05/15/Oracle基础-listagg与wm-concat/index.html">
 <meta property="og:site_name" content="Laughing的工作学习笔记">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="listagg与wm_concat当查询较慢时，使用listagg代替wm_concat WMSYS.WM_CONCAT: 依赖WMSYS 用户，不同oracle环境时可能用不了，返回类型为CLOB，可用substr截取长度后to_char转化为字符类型 LISTAGG  : 11g2才提供的函数，不支持distinct,拼接长度不能大于4000,函数返回为varchar2类型，最大长度为4000">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-04-16T15:43:24.436Z">
+<meta property="og:image" content="http://huangliang314.github.io/2018/05/15/Oracle基础-listagg与wm-concat/1526391282077.png">
+<meta property="og:image" content="http://huangliang314.github.io/2018/05/15/Oracle基础-listagg与wm-concat/1526391739152.png">
+<meta property="og:image" content="http://huangliang314.github.io/2018/05/15/Oracle基础-listagg与wm-concat/1526391772708.png">
+<meta property="og:updated_time" content="2018-05-15T13:43:50.620Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="Oracle基础--listagg与wm_concat">
+<meta name="twitter:description" content="listagg与wm_concat当查询较慢时，使用listagg代替wm_concat WMSYS.WM_CONCAT: 依赖WMSYS 用户，不同oracle环境时可能用不了，返回类型为CLOB，可用substr截取长度后to_char转化为字符类型 LISTAGG  : 11g2才提供的函数，不支持distinct,拼接长度不能大于4000,函数返回为varchar2类型，最大长度为4000">
+<meta name="twitter:image" content="http://huangliang314.github.io/2018/05/15/Oracle基础-listagg与wm-concat/1526391282077.png">
   
     <link rel="alternative" href="/atom.xml" title="Laughing的工作学习笔记" type="application/atom+xml">
   
@@ -154,35 +158,42 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-hello-world" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Oracle基础-listagg与wm-concat" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Hello World
+      Oracle基础--listagg与wm_concat
     </h1>
   
 
         
-        <a href="/2018/04/16/hello-world/" class="archive-article-date">
-  	<time datetime="2018-04-16T15:43:24.435Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-16</time>
+        <a href="/2018/05/15/Oracle基础-listagg与wm-concat/" class="archive-article-date">
+  	<time datetime="2018-05-15T13:36:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-15</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2><span id="quick-start">Quick Start</span></h2><h3><span id="create-a-new-post">Create a new post</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3><span id="run-server">Run server</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3><span id="generate-static-files">Generate static files</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3><span id="deploy-to-remote-sites">Deploy to remote sites</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+        <h2><span id="listagg与wm_concat">listagg与wm_concat</span></h2><p>当查询较慢时，使用listagg代替wm_concat</p>
+<p>WMSYS.WM_CONCAT: 依赖WMSYS 用户，不同oracle环境时可能用不了，返回类型为CLOB，可用substr截取长度后to_char转化为字符类型</p>
+<p>LISTAGG  : 11g2才提供的函数，不支持distinct,拼接长度不能大于4000,函数返回为varchar2类型，最大长度为4000.</p>
+<p>listagg语法：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LISTAGG( [,]) WITHIN GROUP (ORDER BY  ) [OVER (PARTITION BY  )]</span><br></pre></td></tr></table></figure>
+<p>wm_concat 语法：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vm_concat()</span><br></pre></td></tr></table></figure>
+<p>实例：<br>emp表：<br><img src="./1526391282077.png" alt="Alt text"><br>wm_concat:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select deptno,wmsys.wm_concat(ename || &apos;-&apos; || job) name from emp group by deptno;</span><br></pre></td></tr></table></figure>
+<p><img src="./1526391739152.png" alt="Alt text"></p>
+<p>listagg:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select distinct deptno,LISTAGG(ename|| &apos;-&apos; || job, &apos;,&apos;) within group(order by ename) over(partition by emp.deptno) from emp</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select  deptno, LISTAGG(ename|| &apos;-&apos; || job, &apos;,&apos;) within GROup(order by ename)  from emp group by deptno;</span><br></pre></td></tr></table></figure>
+<p><img src="./1526391772708.png" alt="Alt text"></p>
+<p>​</p>
 
       
 
@@ -272,7 +283,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://huangliang314.github.io/2018/04/16/hello-world/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://huangliang314.github.io/2018/05/15/Oracle基础-listagg与wm-concat/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -286,15 +297,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2018/05/15/Oracle基础-listagg与wm-concat/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Oracle基础--listagg与wm_concat
-        
-      </div>
-    </a>
   
+    <a href="/2018/04/16/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hello World</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 

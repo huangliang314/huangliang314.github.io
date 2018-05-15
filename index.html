@@ -152,44 +152,43 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Oracle体系结构-实例恢复与介质恢复" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Oracle基础-listagg与wm-concat" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/15/Oracle体系结构-实例恢复与介质恢复/">Oracle体系结构--实例恢复与介质恢复</a>
+      <a class="article-title" href="/2018/05/15/Oracle基础-listagg与wm-concat/">Oracle基础--listagg与wm_concat</a>
     </h1>
   
 
         
-        <a href="/2018/05/15/Oracle体系结构-实例恢复与介质恢复/" class="archive-article-date">
-  	<time datetime="2018-05-15T13:18:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-15</time>
+        <a href="/2018/05/15/Oracle基础-listagg与wm-concat/" class="archive-article-date">
+  	<time datetime="2018-05-15T13:36:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-15</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1><span id="实例的恢复crash-recovery">实例的恢复(crash recovery)</span></h1><h4><span id="实例恢复发生在那个阶段">实例恢复发生在那个阶段？</span></h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sql&gt; startup nomount       # (读取spfle) ，没有实例恢复。</span><br><span class="line">sql&gt; mount database        # (读取控制文件)，没有实例恢复。</span><br><span class="line">sql&gt; alter database open   # (检查控制文件，数据文件头)，发生实例恢复。</span><br><span class="line"># Oracle在打开数据库时(alter database open)，会检查每个文件头上的信息(SCN)，</span><br><span class="line"># 并同控制文件中相应的信息(SCN)比较，如果不一致，则进行实例恢复。</span><br></pre></td></tr></table></figure>
-<p>实例恢复的过程<br>前滚 rolling forward<br>读取状态为current和active状态的日志(redo log)，将发生crash时，没有来得及写到磁盘上的数据块，使用redo的信息来恢复。<br>打开数据库(alter database open)<br>回滚 rolling back<br>将没有提交的事务进行回滚<br>介质恢复（Media recovery)<br>当发生以下情况时，实例恢复无效，需要进行介质恢复：</p>
-<p>数据文件丢失，损坏。<br>在线日志文件(online redo)丢失，损坏。<br>数据文件太旧 (比如从一个备份集中恢复过来的文件)<br>文件太新（比如，其它所有的文件都是从备份中恢复过来的)<br>示例：</p>
-<p>SQL&gt; select FILE_ID,FILE_NAME,TABLESPACE_NAME,STATUS from dba_data_files order by 1;</p>
-<p>   FILE_ID FILE_NAME                                          TABLESPACE_NAME                STATUS</p>
-<hr>
-<pre><code> 1 /u01/app/oracle/oradata/orcl/system01.dbf          SYSTEM                         AVAILABLE
- 2 /u01/app/oracle/oradata/orcl/sysaux01.dbf          SYSAUX                         AVAILABLE
- 3 /u01/app/oracle/oradata/orcl/undotbs01.dbf         UNDOTBS1                       AVAILABLE
- 4 /u01/app/oracle/oradata/orcl/users01.dbf           USERS                          AVAILABLE
- 5 /u01/app/oracle/oradata/orcl/example01.dbf         EXAMPLE                        AVAILABLE
- 6 /u01/app/oracle/oradata/orcl/users02.dbf           USERS                          AVAILABLE
- 7 /u01/app/oracle/oradata/orcl/undotbs02.dbf         UNDOTBS2                       AVAILABLE
- 8 /u01/app/oracle/oradata/orcl/test_ts01.dbf         TEST_TS                        AVAILABLE
- 9 /u01/app/oracle/oradata/orcl/tbs_a.dbf             TBS_A                          AVAILABLE
-10 /u01/app/oracle/oradata/orcl/test01.dbf            TEST1                          AVAILABLE
-11 /u01/app/oracle/oradata/orcl/test02.dbf            TEST2                          AVAILABLE
-</code></pre><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SQL&gt; alter database datafile 11 offline;</span><br><span class="line"></span><br><span class="line">Database altered.</span><br><span class="line"></span><br><span class="line">SQL&gt; alter system checkpoint;</span><br><span class="line"></span><br><span class="line">System altered.</span><br><span class="line"></span><br><span class="line">SQL&gt; alter database datafile 11 online;</span><br><span class="line">alter database datafile 11 online</span><br><span class="line">*</span><br><span class="line">ERROR at line 1:</span><br><span class="line">ORA-01113: file 11 needs media recovery</span><br><span class="line">ORA-01110: data file 11: &apos;/u01/app/oracle/oradata/orcl/test02.dbf&apos;</span><br><span class="line"></span><br><span class="line">SQL&gt; recover datafile 11;</span><br><span class="line">Media recovery complete.</span><br><span class="line"></span><br><span class="line">SQL&gt; alter database datafile 11 online;</span><br><span class="line"></span><br><span class="line">Database altered.</span><br></pre></td></tr></table></figure>
+        <h2><span id="listagg与wm_concat">listagg与wm_concat</span></h2><p>当查询较慢时，使用listagg代替wm_concat</p>
+<p>WMSYS.WM_CONCAT: 依赖WMSYS 用户，不同oracle环境时可能用不了，返回类型为CLOB，可用substr截取长度后to_char转化为字符类型</p>
+<p>LISTAGG  : 11g2才提供的函数，不支持distinct,拼接长度不能大于4000,函数返回为varchar2类型，最大长度为4000.</p>
+<p>listagg语法：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LISTAGG( [,]) WITHIN GROUP (ORDER BY  ) [OVER (PARTITION BY  )]</span><br></pre></td></tr></table></figure>
+<p>wm_concat 语法：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vm_concat()</span><br></pre></td></tr></table></figure>
+<p>实例：<br>emp表：<br><img src="./1526391282077.png" alt="Alt text"><br>wm_concat:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select deptno,wmsys.wm_concat(ename || &apos;-&apos; || job) name from emp group by deptno;</span><br></pre></td></tr></table></figure>
+<p><img src="./1526391739152.png" alt="Alt text"></p>
+<p>listagg:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select distinct deptno,LISTAGG(ename|| &apos;-&apos; || job, &apos;,&apos;) within group(order by ename) over(partition by emp.deptno) from emp</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">select  deptno, LISTAGG(ename|| &apos;-&apos; || job, &apos;,&apos;) within GROup(order by ename)  from emp group by deptno;</span><br></pre></td></tr></table></figure>
+<p><img src="./1526391772708.png" alt="Alt text"></p>
+<p>​</p>
+
       
 
       
@@ -201,7 +200,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/05/15/Oracle体系结构-实例恢复与介质恢复/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/05/15/Oracle基础-listagg与wm-concat/">展开全文 >></a>
         </p>
       
 
