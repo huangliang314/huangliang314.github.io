@@ -6,18 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://huangliang314.github.io">
-  <title>Laughing的工作学习笔记</title>
+  <title>Oracle体系结构--实例恢复与介质恢复 | Laughing的工作学习笔记</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="实例的恢复(crash recovery)实例恢复发生在那个阶段？sql&amp;gt; startup nomount       # (读取spfle) ，没有实例恢复。sql&amp;gt; mount database        # (读取控制文件)，没有实例恢复。sql&amp;gt; alter database open   # (检查控制文件，数据文件头)，发生实例恢复。# Oracle在打开数据库时">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Laughing的工作学习笔记">
+<meta property="og:title" content="Oracle体系结构--实例恢复与介质恢复">
 <meta property="og:url" content="http://huangliang314.github.io/2018/05/15/Oracle体系结构-实例恢复与介质恢复/index.html">
 <meta property="og:site_name" content="Laughing的工作学习笔记">
 <meta property="og:description" content="实例的恢复(crash recovery)实例恢复发生在那个阶段？sql&amp;gt; startup nomount       # (读取spfle) ，没有实例恢复。sql&amp;gt; mount database        # (读取控制文件)，没有实例恢复。sql&amp;gt; alter database open   # (检查控制文件，数据文件头)，发生实例恢复。# Oracle在打开数据库时">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-15T13:15:21.549Z">
+<meta property="og:updated_time" content="2018-05-15T13:18:19.544Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Laughing的工作学习笔记">
+<meta name="twitter:title" content="Oracle体系结构--实例恢复与介质恢复">
 <meta name="twitter:description" content="实例的恢复(crash recovery)实例恢复发生在那个阶段？sql&amp;gt; startup nomount       # (读取spfle) ，没有实例恢复。sql&amp;gt; mount database        # (读取控制文件)，没有实例恢复。sql&amp;gt; alter database open   # (检查控制文件，数据文件头)，发生实例恢复。# Oracle在打开数据库时">
   
     <link rel="alternative" href="/atom.xml" title="Laughing的工作学习笔记" type="application/atom+xml">
@@ -156,6 +156,21 @@
           <div id="js-content" class="content-ll">
             <article id="post-Oracle体系结构-实例恢复与介质恢复" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Oracle体系结构--实例恢复与介质恢复
+    </h1>
+  
+
+        
+        <a href="/2018/05/15/Oracle体系结构-实例恢复与介质恢复/" class="archive-article-date">
+  	<time datetime="2018-05-15T13:18:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-15</time>
+</a>
+        
+      </header>
     
     <div class="article-entry" itemprop="articleBody">
       

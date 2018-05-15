@@ -155,6 +155,21 @@
     <article id="post-Oracle体系结构-实例恢复与介质恢复" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/15/Oracle体系结构-实例恢复与介质恢复/">Oracle体系结构--实例恢复与介质恢复</a>
+    </h1>
+  
+
+        
+        <a href="/2018/05/15/Oracle体系结构-实例恢复与介质恢复/" class="archive-article-date">
+  	<time datetime="2018-05-15T13:18:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-15</time>
+</a>
+        
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
         <h1><span id="实例的恢复crash-recovery">实例的恢复(crash recovery)</span></h1><h4><span id="实例恢复发生在那个阶段">实例恢复发生在那个阶段？</span></h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sql&gt; startup nomount       # (读取spfle) ，没有实例恢复。</span><br><span class="line">sql&gt; mount database        # (读取控制文件)，没有实例恢复。</span><br><span class="line">sql&gt; alter database open   # (检查控制文件，数据文件头)，发生实例恢复。</span><br><span class="line"># Oracle在打开数据库时(alter database open)，会检查每个文件头上的信息(SCN)，</span><br><span class="line"># 并同控制文件中相应的信息(SCN)比较，如果不一致，则进行实例恢复。</span><br></pre></td></tr></table></figure>
