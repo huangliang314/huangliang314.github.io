@@ -152,42 +152,29 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-文章标题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Oracle体系结构-实例恢复与介质恢复" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/15/文章标题/">文章标题</a>
-    </h1>
-  
-
-        
-        <a href="/2018/05/15/文章标题/" class="archive-article-date">
-  	<time datetime="2018-05-15T12:52:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-15</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1><span id="第一篇hexo博客">第一篇hexo博客</span></h1><p>@(Sample notebook)[Marxico|Manual|Markdown]</p>
-<p><strong>Marxico</strong> is a delicate Markdown editor for Evernote. With reliable storage and sync powered by Evernote, <strong>Marxico</strong> offers greate writing experience. </p>
-<ul>
-<li><strong>Versatile</strong> - supporting code highlight, <em>LaTeX</em> &amp; flow charts,  inserting images &amp; attachments by all means.</li>
-<li><strong>Exquisite</strong> -  neat but powerful editor, featuring offline docs, live preview, and offering the [desktop client][1] and offline [Chrome App][2].</li>
-<li><strong>Sophisticated</strong> - deeply integrated with Evernote, supporting notebook &amp; tags, two-way bind editing.   </li>
-</ul>
+        <h1><span id="实例的恢复crash-recovery">实例的恢复(crash recovery)</span></h1><h4><span id="实例恢复发生在那个阶段">实例恢复发生在那个阶段？</span></h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sql&gt; startup nomount       # (读取spfle) ，没有实例恢复。</span><br><span class="line">sql&gt; mount database        # (读取控制文件)，没有实例恢复。</span><br><span class="line">sql&gt; alter database open   # (检查控制文件，数据文件头)，发生实例恢复。</span><br><span class="line"># Oracle在打开数据库时(alter database open)，会检查每个文件头上的信息(SCN)，</span><br><span class="line"># 并同控制文件中相应的信息(SCN)比较，如果不一致，则进行实例恢复。</span><br></pre></td></tr></table></figure>
+<p>实例恢复的过程<br>前滚 rolling forward<br>读取状态为current和active状态的日志(redo log)，将发生crash时，没有来得及写到磁盘上的数据块，使用redo的信息来恢复。<br>打开数据库(alter database open)<br>回滚 rolling back<br>将没有提交的事务进行回滚<br>介质恢复（Media recovery)<br>当发生以下情况时，实例恢复无效，需要进行介质恢复：</p>
+<p>数据文件丢失，损坏。<br>在线日志文件(online redo)丢失，损坏。<br>数据文件太旧 (比如从一个备份集中恢复过来的文件)<br>文件太新（比如，其它所有的文件都是从备份中恢复过来的)<br>示例：</p>
+<p>SQL&gt; select FILE_ID,FILE_NAME,TABLESPACE_NAME,STATUS from dba_data_files order by 1;</p>
+<p>   FILE_ID FILE_NAME                                          TABLESPACE_NAME                STATUS</p>
 <hr>
-<p>[TOC]</p>
-<h2><span id="介绍我自己">介绍我自己</span></h2><blockquote>
-<p>Markdown is a plain text formatting syntax designed to be converted to<br>HTML. Markdown is popularly used as format for readme files, … or in<br>text editors for the quick creation of rich text documents</p>
-</blockquote>
-<p>.  - <a href="http://en.wikipedia.org/wiki/Markdown" target="_blank" rel="noopener">Wikipedia</a></p>
-<p>As showed in this manual, it uses hash(#) to identify headings, emphasizes some text to be <strong>bold</strong> or <em>italic</em>. You can insert a <a href="http://www.example.com" target="_blank" rel="noopener">link</a> , or a footnote[^demo]. Serveral advanced syntax are listed below, please press <code>Ctrl + /</code> to view Markdown cheatsheet.</p>
-<h3><span id="你好">你好</span></h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@requires_authorization</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">somefunc</span><span class="params">(param1=<span class="string">''</span>, param2=<span class="number">0</span>)</span>:</span></span><br><span class="line">    <span class="string">'''A docstring'''</span></span><br><span class="line">    <span class="keyword">if</span> param1 &gt; param2: <span class="comment"># interesting</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Greater'</span></span><br><span class="line">    <span class="keyword">return</span> (param2 - param1 + <span class="number">1</span>) <span class="keyword">or</span> <span class="keyword">None</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SomeClass</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>message = <span class="string">'''interpreter</span></span><br><span class="line"><span class="string"><span class="meta">... </span>prompt'''</span></span><br></pre></td></tr></table></figure>
-
+<pre><code> 1 /u01/app/oracle/oradata/orcl/system01.dbf          SYSTEM                         AVAILABLE
+ 2 /u01/app/oracle/oradata/orcl/sysaux01.dbf          SYSAUX                         AVAILABLE
+ 3 /u01/app/oracle/oradata/orcl/undotbs01.dbf         UNDOTBS1                       AVAILABLE
+ 4 /u01/app/oracle/oradata/orcl/users01.dbf           USERS                          AVAILABLE
+ 5 /u01/app/oracle/oradata/orcl/example01.dbf         EXAMPLE                        AVAILABLE
+ 6 /u01/app/oracle/oradata/orcl/users02.dbf           USERS                          AVAILABLE
+ 7 /u01/app/oracle/oradata/orcl/undotbs02.dbf         UNDOTBS2                       AVAILABLE
+ 8 /u01/app/oracle/oradata/orcl/test_ts01.dbf         TEST_TS                        AVAILABLE
+ 9 /u01/app/oracle/oradata/orcl/tbs_a.dbf             TBS_A                          AVAILABLE
+10 /u01/app/oracle/oradata/orcl/test01.dbf            TEST1                          AVAILABLE
+11 /u01/app/oracle/oradata/orcl/test02.dbf            TEST2                          AVAILABLE
+</code></pre><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SQL&gt; alter database datafile 11 offline;</span><br><span class="line"></span><br><span class="line">Database altered.</span><br><span class="line"></span><br><span class="line">SQL&gt; alter system checkpoint;</span><br><span class="line"></span><br><span class="line">System altered.</span><br><span class="line"></span><br><span class="line">SQL&gt; alter database datafile 11 online;</span><br><span class="line">alter database datafile 11 online</span><br><span class="line">*</span><br><span class="line">ERROR at line 1:</span><br><span class="line">ORA-01113: file 11 needs media recovery</span><br><span class="line">ORA-01110: data file 11: &apos;/u01/app/oracle/oradata/orcl/test02.dbf&apos;</span><br><span class="line"></span><br><span class="line">SQL&gt; recover datafile 11;</span><br><span class="line">Media recovery complete.</span><br><span class="line"></span><br><span class="line">SQL&gt; alter database datafile 11 online;</span><br><span class="line"></span><br><span class="line">Database altered.</span><br></pre></td></tr></table></figure>
       
 
       
@@ -199,7 +186,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/05/15/文章标题/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/05/15/Oracle体系结构-实例恢复与介质恢复/">展开全文 >></a>
         </p>
       
 
